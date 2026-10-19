@@ -1,0 +1,76 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Face Recognition</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+  </head>
+  <body>
+    <div class="container py-4">
+      <h1 class="mb-4">Face Recognition (pgvector)</h1>
+
+      {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+          {% for category, msg in messages %}
+            <div class="alert alert-{{ category }}" role="alert">{{ msg }}</div>
+          {% endfor %}
+        {% endif %}
+      {% endwith %}
+
+      <div class="row">
+        <div class="col-md-6">
+          <div class="card mb-4">
+            <div class="card-body">
+              <h5 class="card-title">Enroll person</h5>
+              <form method="post" action="/enroll" enctype="multipart/form-data">
+                <div class="mb-3">
+                  <label class="form-label">Name</label>
+                  <input type="text" name="name" class="form-control" required>
+                </div>
+                <div class="mb-3">
+                  <label class="form-label">Image</label>
+                  <input type="file" name="image" accept="image/*" class="form-control" required>
+                </div>
+                <button class="btn btn-primary" type="submit">Enroll</button>
+              </form>
+            </div>
+          </div>
+
+          <div class="card">
+            <div class="card-body">
+              <h5 class="card-title">Recognize face</h5>
+              <form method="post" action="/recognize" enctype="multipart/form-data">
+                <div class="mb-3">
+                  <label class="form-label">Image</label>
+                  <input type="file" name="image" accept="image/*" class="form-control" required>
+                </div>
+                <button class="btn btn-success" type="submit">Recognize</button>
+              </form>
+            </div>
+          </div>
+        </div>
+
+        <div class="col-md-6">
+          <h5>Matches</h5>
+          {% if matches %}
+            <ul class="list-group">
+            {% for m in matches %}
+              <li class="list-group-item d-flex justify-content-between align-items-center">
+                <div>
+                  <strong>{{ m.name }}</strong>
+                  <div class="text-muted">id: {{ m.id }}</div>
+                </div>
+                <span class="badge bg-primary rounded-pill">distance: {{ '%.4f'|format(m.distance) }}</span>
+              </li>
+            {% endfor %}
+            </ul>
+          {% else %}
+            <p class="text-muted">No matches yet. Enroll someone or upload an image to recognize.</p>
+          {% endif %}
+        </div>
+      </div>
+
+    </div>
+  </body>
+</html>

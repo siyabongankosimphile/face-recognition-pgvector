@@ -4,3 +4,5 @@ numpy
 psycopg2-binary
 pgvector
 Flask
+gunicorn
+python-dotenv

@@ -1,25 +1,22 @@
-# Face recognition + PostgreSQL (pgvector) example
+# Docker & production instructions added
 
-Prereqs:
-- PostgreSQL >= 13
-- Create a database and set DATABASE_URL environment variable:
-  export DATABASE_URL="postgres://user:pass@host:5432/dbname"
-- In the DB run: CREATE EXTENSION IF NOT EXISTS pgvector;
+## Docker
 
-Install Python deps:
-  pip install -r requirements.txt
+Build and run with docker-compose (this will start Postgres + the web app):
 
-Create tables:
-  python -c "from db import create_tables; create_tables()"
+  docker-compose up --build
 
-Enroll a person (from images):
-  python enroll.py "Alice" alice1.jpg alice2.jpg
+The web app will be available at http://localhost:5000 and the database at port 5432.
 
-Recognize from an image:
-  python recognize.py group_photo.jpg
+The docker-compose file creates a `postgres` DB user with password `example`. Change these values in `docker-compose.yml` for production.
 
-Run webcam recognition:
-  python recognize.py --webcam
+## Production notes
 
-Run the API:
-  python app.py
+- The app runs under Gunicorn in the Docker image.
+- SECRET_KEY, DATABASE_URL and other sensitive settings should be provided via environment variables or a secrets manager in production — do not use the default `change-me-in-production` secret.
+- For large-scale or high-throughput deployments consider replacing `face_recognition` (dlib) with a GPU-backed model and using a model server for inference.
+
+## Web dashboard
+
+A minimal web dashboard is available at `/` for enrolling and recognizing faces via file uploads.
+
